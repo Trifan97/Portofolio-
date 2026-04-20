@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tudor Trifan — Geospatial Data Scientist · Climate & Drought Researcher</title>
+<meta name="description" content="PhD researcher in climate risk, drought vulnerability and geospatial AI. ArcGIS · Python · Machine Learning · Remote Sensing · Sentinel · ERA5.">
+<meta name="theme-color" content="#0B1E33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Colour — brand */
+  --navy-900: #0A1B2E;
+  --navy-800: #0B1E33;
+  --navy-700: #0F2640;
+  --navy-600: #162F47;
+  --navy-500: #1E3A55;
+
+  --teal-500: #1AA99A;
+  --teal-600: #14877A;
+  --teal-400: #2DC4B4;
+  --teal-100: rgba(26,169,154,0.12);
+
+  --amber-500: #E8923A;
+  --amber-100: rgba(232,146,58,0.12);
+
+  --rose-500:  #D97676;
+
+  /* Colour — neutral */
+  --white:    #FFFFFF;
+  --off:      #F5F7FA;
+  --off-2:    #EDF1F5;
+  --ink-900:  #0C1824;
+  --ink-700:  #1C2B3A;
+  --ink-500:  #5A6A7A;
+  --ink-300:  #94A3B4;
+  --line:     #E2E8EF;
+
+  /* Type */
+  --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --fs-xs:   0.72rem;
+  --fs-sm:   0.82rem;
+  --fs-base: 0.95rem;
+  --fs-md:   1.05rem;
+  --fs-lg:   1.25rem;
+  --fs-xl:   1.55rem;
+  --fs-2xl:  2rem;
+  --fs-3xl:  clamp(1.9rem, 3.6vw, 2.6rem);
+  --fs-display: clamp(3rem, 6.5vw, 5.4rem);
+
+  /* Spacing scale (4px base) */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  /* Radius */
+  --r-xs:  4px;
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  20px;
+  --r-full: 999px;
+
+  /* Shadow */
+  --sh-xs: 0 1px 2px rgba(10,24,46,0.06);
+  --sh-sm: 0 2px 6px rgba(10,24,46,0.08);
+  --sh-md: 0 6px 20px rgba(10,24,46,0.10);
+  --sh-lg: 0 18px 40px rgba(10,24,46,0.16);
+  --sh-teal: 0 10px 30px rgba(26,169,154,0.18);
+
+  /* Layout */
+  --container: 1160px;
+  --nav-h:     64px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+  --dur-1: 160ms;
+  --dur-2: 260ms;
+  --dur-3: 420ms;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESET + BASE
+   ══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--ink-700);
+  background: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a  { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; }
+:focus-visible { outline: 2px solid var(--teal-400); outline-offset: 3px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--navy-900); }
+::-webkit-scrollbar-thumb { background: var(--teal-600); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-500); }
+
+/* Selection */
+::selection { background: var(--teal-500); color: var(--white); }
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT PRIMITIVES
+   ══════════════════════════════════════════════════════════════ */
+.container { max-width: var(--container); margin: 0 auto; width: 100%; padding: 0 var(--sp-6); }
+section { padding: var(--sp-24) var(--sp-6); position: relative; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: var(--sp-3);
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: var(--teal-500); letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: var(--sp-3);
+}
+.eyebrow::before {
+  content: ''; width: 28px; height: 1px; background: currentColor;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; line-height: 1.1; }
+h2 { font-size: var(--fs-3xl); margin-bottom: var(--sp-10); color: var(--ink-900); }
+h2 .accent { color: var(--teal-500); }
+.lead { color: var(--ink-500); font-size: var(--fs-md); max-width: 64ch; margin-bottom: var(--sp-10); }
+
+/* ══════════════════════════════════════════════════════════════
+   NAV
+   ══════════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed; inset: 0 0 auto 0; height: var(--nav-h); z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-6);
+  background: rgba(10,27,46,0.78);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid rgba(26,169,154,0.14);
+  transition: background var(--dur-2);
+}
+.nav-logo {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-sm);
+  color: var(--white); letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+}
+.nav-logo .dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--teal-400);
+  box-shadow: 0 0 12px var(--teal-400);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%     { opacity: .45; transform: scale(.85); }
+}
+.nav-links { display: flex; gap: var(--sp-8); list-style: none; }
+.nav-links a {
+  font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.72);
+  transition: color var(--dur-1); position: relative; padding: 6px 0;
+}
+.nav-links a::after {
+  content: ''; position: absolute; inset: auto 0 0 0;
+  height: 1px; background: var(--teal-400);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.nav-links a:hover,
+.nav-links a.is-active { color: var(--teal-400); }
+.nav-links a:hover::after,
+.nav-links a.is-active::after { transform: scaleX(1); }
+.nav-toggle { display: none; padding: 6px; }
+.nav-toggle span {
+  display: block; width: 22px; height: 2px; background: var(--white);
+  margin: 4px 0; transition: transform var(--dur-2), opacity var(--dur-1);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh; background: var(--navy-900);
+  display: flex; align-items: center;
+  padding-top: calc(var(--nav-h) + var(--sp-12));
+  padding-bottom: var(--sp-16);
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero-bg-grid, .hero-bg-map, .hero-glow { position: absolute; pointer-events: none; }
+.hero-bg-grid {
+  inset: 0; opacity: 0.06;
+  background-image:
+    linear-gradient(rgba(26,169,154,0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,169,154,0.6) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: grid-drift 30s linear infinite;
+  mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 75%);
+}
+@keyframes grid-drift { to { background-position: 64px 64px; } }
+.hero-bg-map {
+  inset: 0; opacity: 0.6;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,1) 100%);
+  mask-image: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,1) 100%);
+}
+@media (max-width: 960px) {
+  .hero-bg-map {
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,1) 40%);
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,1) 40%);
+    opacity: 0.5;
+  }
+}
+.hero-glow {
+  width: 640px; height: 640px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,169,154,0.16) 0%, transparent 70%);
+  top: -140px; right: -120px;
+  animation: float 14s ease-in-out infinite;
+}
+.hero-glow--2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(232,146,58,0.10) 0%, transparent 70%);
+  bottom: -80px; left: 6%;
+  animation-duration: 18s;
+}
+@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(12px,-14px); } }
+
+.hero-inner {
+  max-width: var(--container); margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1.3fr 1fr;
+  gap: var(--sp-16); align-items: center; position: relative; z-index: 2;
+}
+.hero-status {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: var(--teal-400); letter-spacing: 0.12em; text-transform: uppercase;
+  background: rgba(26,169,154,0.08); border: 1px solid rgba(26,169,154,0.22);
+  padding: 6px 12px; border-radius: var(--r-full); margin-bottom: var(--sp-5);
+}
+.hero-status .ping { position: relative; width: 8px; height: 8px; }
+.hero-status .ping::before, .hero-status .ping::after {
+  content: ''; position: absolute; inset: 0; border-radius: 999px; background: var(--teal-400);
+}
+.hero-status .ping::after { animation: ping 2s var(--ease-out) infinite; }
+@keyframes ping {
+  0%   { transform: scale(1); opacity: .7; }
+  80%,100% { transform: scale(2.5); opacity: 0; }
+}
+h1.hero-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: var(--fs-display); color: var(--white);
+  letter-spacing: -0.03em; margin-bottom: var(--sp-3);
+}
+h1.hero-title .accent {
+  background: linear-gradient(120deg, var(--teal-400) 0%, var(--teal-500) 70%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero-role {
+  font-family: var(--font-display); font-weight: 600; font-size: clamp(1.05rem, 2vw, 1.4rem);
+  color: rgba(255,255,255,0.7); margin-bottom: var(--sp-5);
+}
+.hero-role .sep { color: var(--teal-500); margin: 0 8px; }
+.hero-desc {
+  font-size: var(--fs-md); color: rgba(255,255,255,0.72);
+  line-height: 1.75; max-width: 58ch; margin-bottom: var(--sp-6);
+}
+.hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--sp-8); }
+.pill {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  padding: 5px 12px; border-radius: var(--r-full);
+  border: 1px solid rgba(26,169,154,0.32);
+  color: rgba(255,255,255,0.78); letter-spacing: 0.04em;
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
+}
+.pill:hover { border-color: var(--teal-400); color: var(--teal-400); background: rgba(26,169,154,0.06); }
+.hero-ctas { display: flex; gap: var(--sp-3); flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  padding: 12px 24px; border-radius: var(--r-sm);
+  font-family: var(--font-display); font-weight: 600; font-size: var(--fs-sm);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  transition: transform var(--dur-1), background var(--dur-1), border-color var(--dur-1), color var(--dur-1), box-shadow var(--dur-2);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary  { background: var(--teal-500); color: var(--white); box-shadow: var(--sh-teal); }
+.btn-primary:hover { background: var(--teal-400); }
+.btn-outline  { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.24); }
+.btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.04); }
+.btn-ghost    { background: transparent; color: var(--teal-500); padding: 10px 12px; }
+.btn-ghost:hover { color: var(--teal-400); }
+
+/* Hero card (right) */
+.hero-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-lg); padding: var(--sp-6);
+  backdrop-filter: blur(8px);
+}
+.hero-card::after {
+  content: ''; position: absolute; inset: -1px; border-radius: inherit;
+  padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(26,169,154,.3), transparent 40%, rgba(232,146,58,.18) 80%);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude; -webkit-mask-composite: xor;
+}
+.hero-coords {
+  display: flex; gap: var(--sp-3); align-items: center;
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: rgba(255,255,255,0.45); letter-spacing: 0.08em; margin-bottom: var(--sp-5);
+}
+.hero-coords .pin { color: var(--teal-400); }
+.hero-photo-frame {
+  position: relative; aspect-ratio: 1; border-radius: var(--r-md);
+  overflow: hidden; background: linear-gradient(135deg, var(--navy-700), var(--navy-900));
+  border: 1px solid rgba(26,169,154,0.28);
+  margin-bottom: var(--sp-5);
+}
+.hero-photo-frame img {
+  width: 100%; height: 100%; object-fit: cover; object-position: top;
+  filter: grayscale(15%) contrast(1.03);
+}
+.hero-photo-frame::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(10,27,46,0.6) 100%);
+  pointer-events: none;
+}
+.hero-photo-tag {
+  position: absolute; inset: auto var(--sp-3) var(--sp-3) var(--sp-3);
+  font-family: var(--font-mono); font-size: var(--fs-xs); color: rgba(255,255,255,0.75);
+  letter-spacing: 0.08em;
+}
+.hero-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2); padding: var(--sp-3) 0 0 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.hero-stat { text-align: center; padding: var(--sp-2) var(--sp-1); }
+.hero-stat-num {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-xl);
+  color: var(--teal-400); line-height: 1;
+}
+.hero-stat-label {
+  font-size: 10px; color: rgba(255,255,255,0.42);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px;
+}
+.scroll-hint {
+  position: absolute; bottom: var(--sp-6); left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; animation: bounce 2.4s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: translate(-50%,0); }
+  50%     { transform: translate(-50%,6px); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ABOUT
+   ══════════════════════════════════════════════════════════════ */
+#about { background: var(--off); }
+.about-grid {
+  display: grid; grid-template-columns: 1.15fr 1fr;
+  gap: var(--sp-16); align-items: start;
+}
+.about-text p {
+  font-size: var(--fs-md); line-height: 1.8; color: var(--ink-500);
+  margin-bottom: var(--sp-5);
+}
+.about-text strong { color: var(--ink-900); font-weight: 600; }
+.about-text em { font-style: normal; font-weight: 600; color: var(--teal-600); }
+
+.detail-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-3); }
+.detail-item {
+  display: grid; grid-template-columns: 36px 1fr; gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--white); border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-xs);
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2);
+}
+.detail-item:hover { transform: translateY(-2px); box-shadow: var(--sh-sm); border-color: rgba(26,169,154,0.35); }
+.detail-icon {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-100); color: var(--teal-600);
+}
+.detail-icon svg { width: 18px; height: 18px; }
+.detail-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-300); margin-bottom: 2px;
+}
+.detail-value { font-size: var(--fs-sm); color: var(--ink-700); font-weight: 500; line-height: 1.5; }
+
+/* ══════════════════════════════════════════════════════════════
+   JOURNEY (Education + Experience timeline)
+   ══════════════════════════════════════════════════════════════ */
+#journey { background: var(--white); }
+.journey-tabs {
+  display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--off); border: 1px solid var(--line);
+  border-radius: var(--r-full); margin-bottom: var(--sp-8);
+}
+.journey-tab {
+  padding: 8px 18px; border-radius: var(--r-full);
+  font-size: var(--fs-sm); font-weight: 500; color: var(--ink-500);
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.journey-tab.is-active { background: var(--navy-800); color: var(--white); }
+.journey-panel { display: none; }
+.journey-panel.is-active { display: block; }
+.timeline {
+  position: relative; padding-left: var(--sp-8);
+}
+.timeline::before {
+  content: ''; position: absolute; top: 8px; bottom: 8px; left: 9px;
+  width: 2px; background: linear-gradient(180deg, var(--teal-500), var(--line));
+}
+.tl-item { position: relative; padding: 0 0 var(--sp-8) 0; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+  content: ''; position: absolute; left: -28px; top: 6px;
+  width: 14px; height: 14px; border-radius: 999px;
+  background: var(--white); border: 2.5px solid var(--teal-500);
+  box-shadow: 0 0 0 4px rgba(26,169,154,0.12);
+}
+.tl-item.current::before { background: var(--teal-500); }
+.tl-head {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-3);
+  align-items: baseline; margin-bottom: 4px;
+}
+.tl-title { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-md); color: var(--ink-900); }
+.tl-date { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--teal-600); letter-spacing: 0.06em; }
+.tl-where { font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--sp-2); font-style: italic; }
+.tl-body { font-size: var(--fs-sm); color: var(--ink-500); line-height: 1.7; }
+.tl-body ul { list-style: none; padding: 0; margin-top: 6px; }
+.tl-body li { padding-left: 18px; position: relative; margin-bottom: 4px; }
+.tl-body li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 6px; height: 2px; background: var(--teal-500); border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESEARCH
+   ══════════════════════════════════════════════════════════════ */
+#research { background: var(--off); }
+.pub-featured {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
+  border-radius: var(--r-lg); overflow: hidden;
+  color: var(--white); margin-bottom: var(--sp-8);
+  box-shadow: var(--sh-lg);
+  position: relative; isolation: isolate;
+}
+.pub-featured::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(600px 200px at 85% 90%, rgba(26,169,154,0.25), transparent 60%),
+    radial-gradient(500px 180px at 10% 10%, rgba(232,146,58,0.14), transparent 60%);
+  z-index: -1;
+}
+.pub-featured-body { padding: var(--sp-10); }
+.pub-featured-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: var(--r-full);
+  background: var(--teal-100); color: var(--teal-400);
+  border: 1px solid rgba(26,169,154,0.25); margin-bottom: var(--sp-4);
+}
+.pub-featured-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.3;
+  margin-bottom: var(--sp-3);
+}
+.pub-featured-meta { font-size: var(--fs-sm); color: rgba(255,255,255,0.65); margin-bottom: var(--sp-5); line-height: 1.7; }
+.pub-featured-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--sp-5); }
+.chip {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  padding: 4px 10px; border-radius: var(--r-xs);
+  background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.chip-doi { background: var(--amber-100); color: var(--amber-500); border-color: rgba(232,146,58,0.3); }
+.pub-featured-fig {
+  padding: var(--sp-8); display: flex; align-items: center; justify-content: center;
+  border-left: 1px solid rgba(255,255,255,0.06);
+}
+.pub-figure {
+  width: 100%; max-width: 360px;
+}
+
+.pub-list { display: grid; grid-template-columns: 1fr; gap: var(--sp-3); }
+.pub-card {
+  padding: var(--sp-5) var(--sp-6);
+  background: var(--white); border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  display: grid; grid-template-columns: 56px 1fr auto;
+  gap: var(--sp-5); align-items: start;
+  transition: border-color var(--dur-1), box-shadow var(--dur-2), transform var(--dur-2);
+}
+.pub-card:hover {
+  border-color: var(--teal-500);
+  box-shadow: var(--sh-sm);
+  transform: translateY(-1px);
+}
+.pub-year {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--teal-600); font-weight: 500;
+  padding-top: 2px;
+}
+.pub-badge {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: var(--r-full); margin-bottom: var(--sp-2);
+}
+.badge-first { background: var(--teal-100); color: var(--teal-600); }
+.badge-co    { background: rgba(90,106,122,0.1); color: var(--ink-500); }
+.pub-title {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--fs-md);
+  color: var(--ink-900); line-height: 1.4; margin-bottom: 6px;
+}
+.pub-meta { font-size: var(--fs-xs); color: var(--ink-500); font-style: italic; line-height: 1.6; }
+.pub-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: var(--fs-xs); color: var(--teal-600); font-weight: 500;
+  align-self: start; padding-top: 4px;
+  transition: gap var(--dur-1), color var(--dur-1);
+}
+.pub-link:hover { gap: 8px; color: var(--teal-500); }
+
+/* ══════════════════════════════════════════════════════════════
+   PROJECTS
+   ══════════════════════════════════════════════════════════════ */
+#projects { background: var(--navy-900); color: var(--white); }
+#projects h2 { color: var(--white); }
+.projects-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--sp-5);
+}
+.project-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-md); padding: var(--sp-6);
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  transition: border-color var(--dur-2), background var(--dur-2), transform var(--dur-2);
+  position: relative;
+}
+.project-card:hover {
+  border-color: rgba(26,169,154,0.45);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-3px);
+}
+.project-card.coming { border-style: dashed; opacity: 0.7; }
+.project-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-3); margin-bottom: var(--sp-1);
+}
+.project-icon {
+  width: 40px; height: 40px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-100); color: var(--teal-400);
+}
+.project-icon svg { width: 22px; height: 22px; }
+.project-status {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: var(--r-full);
+}
+.status-live { background: rgba(26,169,154,0.15); color: var(--teal-400); }
+.status-soon { background: rgba(232,146,58,0.15); color: var(--amber-500); }
+.project-title {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-md);
+  color: var(--white);
+}
+.project-desc {
+  font-size: var(--fs-sm); color: rgba(255,255,255,0.62);
+  line-height: 1.7; flex: 1;
+}
+.project-metrics {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2);
+  padding: var(--sp-3); background: rgba(0,0,0,0.18);
+  border-radius: var(--r-sm); border: 1px solid rgba(255,255,255,0.06);
+}
+.metric {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: rgba(255,255,255,0.75);
+}
+.metric b { color: var(--teal-400); font-weight: 600; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.project-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 3px 9px; border-radius: var(--r-xs);
+  background: rgba(26,169,154,0.08); color: var(--teal-400);
+  border: 1px solid rgba(26,169,154,0.18);
+}
+.project-link {
+  font-size: var(--fs-xs); font-weight: 500; color: rgba(255,255,255,0.5);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding-top: var(--sp-2); border-top: 1px solid rgba(255,255,255,0.06);
+  transition: color var(--dur-1), gap var(--dur-1);
+}
+.project-link:hover { color: var(--teal-400); gap: 10px; }
+.projects-note {
+  margin-top: var(--sp-6); font-size: var(--fs-xs); color: rgba(255,255,255,0.4); text-align: center;
+}
+.projects-note a { color: var(--teal-400); font-weight: 500; }
+
+/* ══════════════════════════════════════════════════════════════
+   CERTIFICATIONS
+   ══════════════════════════════════════════════════════════════ */
+#certifications { background: var(--off); }
+.certs-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--sp-3);
+}
+.cert-card {
+  background: var(--white); border-radius: var(--r-md);
+  border: 1px solid var(--line); padding: var(--sp-5);
+  display: grid; grid-template-columns: 44px 1fr;
+  gap: var(--sp-4); align-items: start;
+  transition: border-color var(--dur-1), box-shadow var(--dur-2), transform var(--dur-2);
+}
+.cert-card:hover { border-color: var(--teal-500); box-shadow: var(--sh-sm); transform: translateY(-1px); }
+.cert-logo {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  letter-spacing: 0.04em;
+}
+.cert-logo.google { background: #F8FAFC; color: #4285F4; border: 1px solid #E2E8EF; }
+.cert-logo.ibm    { background: #0F1B3D; color: #FFFFFF; }
+.cert-name {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--fs-sm);
+  color: var(--ink-900); margin-bottom: 4px; line-height: 1.4;
+}
+.cert-issuer { font-size: var(--fs-xs); color: var(--ink-500); margin-bottom: 4px; }
+.cert-date {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--teal-600); letter-spacing: 0.06em;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.cert-progress {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: var(--r-full); margin-left: 6px;
+  background: var(--amber-100); color: var(--amber-500);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SKILLS
+   ══════════════════════════════════════════════════════════════ */
+#skills { background: var(--white); }
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sp-8);
+}
+.skill-group-title {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-sm);
+  color: var(--ink-900); letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: var(--sp-4); padding-bottom: var(--sp-2);
+  border-bottom: 2px solid var(--teal-500);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.skill-group-title .count { font-family: var(--font-mono); font-size: 10px; color: var(--ink-300); }
+.skill-items { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: var(--r-full);
+  background: var(--off); border: 1px solid var(--line);
+  font-size: var(--fs-xs); color: var(--ink-700);
+  transition: transform var(--dur-1), border-color var(--dur-1), background var(--dur-1);
+}
+.skill-chip:hover { transform: translateY(-1px); border-color: var(--teal-500); background: var(--white); }
+.skill-chip .dot {
+  width: 6px; height: 6px; border-radius: 999px; background: var(--teal-500);
+}
+.skill-chip.level-high .dot   { background: var(--teal-500); }
+.skill-chip.level-mid  .dot   { background: var(--amber-500); }
+.skill-chip.level-learn .dot  { background: var(--ink-300); }
+.skill-legend {
+  display: flex; flex-wrap: wrap; gap: var(--sp-5); margin-top: var(--sp-8);
+  font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-500);
+}
+.skill-legend i {
+  display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; vertical-align: middle;
+  font-style: normal;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CONTACT
+   ══════════════════════════════════════════════════════════════ */
+#contact { background: var(--navy-900); color: var(--white); }
+#contact h2 { color: var(--white); }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--sp-16); align-items: start;
+}
+.contact-intro { font-size: var(--fs-md); color: rgba(255,255,255,0.72); line-height: 1.8; margin-bottom: var(--sp-6); max-width: 52ch; }
+.contact-targets {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--sp-6);
+}
+.contact-target {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  padding: 4px 10px; border-radius: var(--r-full);
+  background: rgba(26,169,154,0.1); color: var(--teal-400);
+  border: 1px solid rgba(26,169,154,0.25);
+}
+.contact-links { display: flex; flex-direction: column; gap: var(--sp-2); }
+.contact-link {
+  display: grid; grid-template-columns: 36px 1fr 20px; gap: var(--sp-3); align-items: center;
+  padding: var(--sp-3) var(--sp-5);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-sm); color: rgba(255,255,255,0.8);
+  font-size: var(--fs-sm);
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1), transform var(--dur-1);
+}
+.contact-link:hover {
+  border-color: var(--teal-500); color: var(--teal-400);
+  background: rgba(26,169,154,0.05); transform: translateX(2px);
+}
+.contact-link .icn {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(26,169,154,0.1); color: var(--teal-400);
+}
+.contact-link .icn svg { width: 18px; height: 18px; }
+.contact-link .arr { opacity: 0; transition: opacity var(--dur-1), transform var(--dur-1); }
+.contact-link:hover .arr { opacity: 1; transform: translateX(2px); }
+
+.contact-form { display: flex; flex-direction: column; gap: var(--sp-4);
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  padding: var(--sp-6); border-radius: var(--r-md);
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.45);
+}
+.form-input, .form-textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--r-sm); padding: 12px 14px;
+  color: var(--white); font-family: var(--font-sans); font-size: var(--fs-sm);
+  transition: border-color var(--dur-1), background var(--dur-1); outline: none;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.28); }
+.form-input:focus, .form-textarea:focus { border-color: var(--teal-400); background: rgba(26,169,154,0.04); }
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-msg { font-size: var(--fs-xs); color: var(--teal-400); margin-top: 4px; min-height: 16px; }
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+footer {
+  background: var(--navy-800); border-top: 1px solid rgba(255,255,255,0.06);
+  padding: var(--sp-6);
+}
+.footer-inner {
+  max-width: var(--container); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--sp-4);
+}
+.footer-name { font-family: var(--font-display); font-weight: 700; color: var(--white); font-size: var(--fs-sm); }
+.footer-name span { color: var(--teal-400); }
+.footer-copy { font-size: var(--fs-xs); color: rgba(255,255,255,0.35); }
+.footer-links { display: flex; gap: var(--sp-5); }
+.footer-links a { font-size: var(--fs-xs); color: rgba(255,255,255,0.45); transition: color var(--dur-1); }
+.footer-links a:hover { color: var(--teal-400); }
+
+/* ══════════════════════════════════════════════════════════════
+   UTILITIES
+   ══════════════════════════════════════════════════════════════ */
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .hero-inner { grid-template-columns: 1fr; gap: var(--sp-10); }
+  .hero-card { max-width: 400px; margin: 0 auto; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; gap: var(--sp-10); }
+  .pub-featured { grid-template-columns: 1fr; }
+  .pub-featured-fig { border-left: 0; border-top: 1px solid rgba(255,255,255,0.06); }
+  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .nav-links.is-open {
+    display: flex; flex-direction: column; gap: 0;
+    position: fixed; top: var(--nav-h); left: 0; right: 0;
+    background: var(--navy-800); padding: var(--sp-5);
+    border-bottom: 1px solid rgba(26,169,154,0.2);
+  }
+  .nav-links.is-open li { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+}
+@media (max-width: 640px) {
+  section { padding: var(--sp-16) var(--sp-5); }
+  .pub-card { grid-template-columns: 1fr; gap: var(--sp-2); }
+  .pub-year { order: -1; }
+  .pub-featured-body { padding: var(--sp-6); }
+  .hero-pills { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ NAV ════════════════════════════════════════════════════════════ -->
+<nav class="nav" aria-label="Primary">
+  <a class="nav-logo" href="#hero">
+    <span class="dot"></span>
+    Tudor Trifan
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#certifications">Credentials</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════ HERO ════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <svg class="hero-bg-map" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="cityGlow" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="3.5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <linearGradient id="danubeGrad" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%"   stop-color="#5BA8E8" stop-opacity="0.20"/>
+        <stop offset="20%"  stop-color="#7DD3FC" stop-opacity="0.70"/>
+        <stop offset="80%"  stop-color="#7DD3FC" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#5BA8E8" stop-opacity="0.55"/>
+      </linearGradient>
+      <radialGradient id="seaGrad">
+        <stop offset="0%"   stop-color="#5BA8E8" stop-opacity="0.20"/>
+        <stop offset="100%" stop-color="#5BA8E8" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="cityHalo">
+        <stop offset="0%"   stop-color="#7DD3FC" stop-opacity="0.55"/>
+        <stop offset="55%"  stop-color="#7DD3FC" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#7DD3FC" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Basin outline (very faint) -->
+    <path d="M 100 200 Q 60 320 90 500 L 240 640 Q 500 720 800 700 L 1100 720 Q 1330 690 1410 580 L 1430 420 Q 1380 220 1200 180 L 800 150 Q 400 130 100 200 Z"
+          fill="rgba(91,168,232,0.025)" stroke="rgba(125,211,252,0.10)" stroke-width="0.6" stroke-dasharray="3 5"/>
+
+    <!-- Black Sea -->
+    <ellipse cx="1490" cy="500" rx="180" ry="240" fill="url(#seaGrad)"/>
+    <text x="1380" y="600" font-family="JetBrains Mono, monospace" font-size="10" fill="#5BA8E8" opacity="0.5" letter-spacing="0.25em">BLACK SEA</text>
+
+    <!-- Country labels (background layer) -->
+    <g font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(125,211,252,0.18)" letter-spacing="0.32em" text-anchor="middle">
+      <text x="240" y="290">DEUTSCHLAND</text>
+      <text x="430" y="170">ČESKO</text>
+      <text x="500" y="295">ÖSTERREICH</text>
+      <text x="640" y="220">SLOVENSKO</text>
+      <text x="820" y="350">MAGYARORSZÁG</text>
+      <text x="430" y="430">SLOVENIJA</text>
+      <text x="600" y="460">HRVATSKA</text>
+      <text x="780" y="540">SRBIJA</text>
+      <text x="1020" y="690">БЪЛГАРИЯ</text>
+      <text x="1230" y="430">ROMÂNIA</text>
+      <text x="1395" y="270">MOLDOVA</text>
+    </g>
+
+    <!-- Tributaries (faint) -->
+    <g fill="none" stroke="#5BA8E8" stroke-opacity="0.32" stroke-width="0.9" stroke-linecap="round">
+      <path d="M 320 380 Q 340 290 355 217"/>            <!-- Inn -->
+      <path d="M 480 410 Q 600 410 720 295"/>            <!-- Drava -->
+      <path d="M 510 470 Q 660 482 815 484"/>            <!-- Sava -->
+      <path d="M 780 200 Q 800 350 815 484"/>            <!-- Tisza -->
+      <path d="M 1100 380 Q 1120 470 1140 555"/>         <!-- Olt -->
+      <path d="M 1380 220 Q 1395 340 1410 460"/>         <!-- Prut -->
+    </g>
+
+    <!-- Tributary labels -->
+    <g font-family="JetBrains Mono, monospace" font-size="7" fill="rgba(125,211,252,0.35)" letter-spacing="0.2em">
+      <text x="345" y="295" transform="rotate(-72 345 295)">INN</text>
+      <text x="630" y="395">DRAVA</text>
+      <text x="640" y="492">SAVA</text>
+      <text x="800" y="320">TISZA</text>
+      <text x="1115" y="475">OLT</text>
+      <text x="1390" y="340">PRUT</text>
+    </g>
+
+    <!-- Main Danube -->
+    <path d="M 33 261 Q 90 240 131 229 Q 200 200 268 185 Q 320 188 355 217 Q 450 240 547 243 L 596 247 Q 660 268 722 293 Q 770 388 815 484 Q 880 506 949 500 Q 1060 535 1176 549 Q 1290 530 1407 456"
+          fill="none" stroke="url(#danubeGrad)" stroke-width="2.8" stroke-linecap="round" filter="url(#cityGlow)"/>
+    <text x="380" y="195" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(125,211,252,0.55)" letter-spacing="0.35em" transform="rotate(-3 380 195)">D A N U B E</text>
+
+    <!-- Cities -->
+    <g font-family="JetBrains Mono, monospace" font-size="10" fill="#BAE6FD" letter-spacing="0.14em">
+
+      <!-- Prague (Tudor's location · highlighted) -->
+      <g transform="translate(420 110)">
+        <circle r="16" fill="url(#cityHalo)"/>
+        <circle r="4.5" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.8" fill="#FFFFFF"/>
+        <text x="11" y="4" font-size="11" fill="#E0F2FE">PRAGUE</text>
+      </g>
+
+      <!-- München -->
+      <g transform="translate(234 248)">
+        <circle r="9" fill="url(#cityHalo)"/>
+        <circle r="3" fill="#7DD3FC"/>
+        <text x="-72" y="4" font-size="9" opacity="0.8">MÜNCHEN</text>
+      </g>
+
+      <!-- Wien (Vienna) -->
+      <g transform="translate(547 243)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="9" y="-7">WIEN</text>
+      </g>
+
+      <!-- Bratislava -->
+      <g transform="translate(596 247)">
+        <circle r="9" fill="url(#cityHalo)"/>
+        <circle r="2.8" fill="#7DD3FC"/>
+        <text x="9" y="16" font-size="9">BRATISLAVA</text>
+      </g>
+
+      <!-- Budapest -->
+      <g transform="translate(722 293)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="11" y="4">BUDAPEST</text>
+      </g>
+
+      <!-- Ljubljana -->
+      <g transform="translate(426 396)">
+        <circle r="8" fill="url(#cityHalo)"/>
+        <circle r="2.6" fill="#7DD3FC"/>
+        <text x="-78" y="4" font-size="9" opacity="0.8">LJUBLJANA</text>
+      </g>
+
+      <!-- Zagreb -->
+      <g transform="translate(521 413)">
+        <circle r="9" fill="url(#cityHalo)"/>
+        <circle r="2.8" fill="#7DD3FC"/>
+        <text x="9" y="4" font-size="9">ZAGREB</text>
+      </g>
+
+      <!-- Sarajevo -->
+      <g transform="translate(681 552)">
+        <circle r="8" fill="url(#cityHalo)"/>
+        <circle r="2.6" fill="#7DD3FC"/>
+        <text x="-72" y="4" font-size="9" opacity="0.8">SARAJEVO</text>
+      </g>
+
+      <!-- Beograd (Belgrade) -->
+      <g transform="translate(815 484)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="11" y="4">BEOGRAD</text>
+      </g>
+
+      <!-- Sofia -->
+      <g transform="translate(1003 634)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="11" y="4">SOFIA</text>
+      </g>
+
+      <!-- București (Bucharest) -->
+      <g transform="translate(1184 511)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="11" y="4">BUCUREȘTI</text>
+      </g>
+
+      <!-- Chișinău -->
+      <g transform="translate(1366 329)">
+        <circle r="12" fill="url(#cityHalo)"/>
+        <circle r="3.8" fill="#7DD3FC" filter="url(#cityGlow)"/>
+        <circle r="1.6" fill="#FFFFFF"/>
+        <text x="-95" y="4">CHIȘINĂU</text>
+      </g>
+
+    </g>
+  </svg>
+  <div class="hero-glow"></div>
+  <div class="hero-glow hero-glow--2"></div>
+
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-status">
+        <span class="ping"></span>
+        Open to EO / AI roles · climate tech · AgTech
+      </div>
+      <h1 class="hero-title">Tudor<br><span class="accent">Trifan</span></h1>
+      <div class="hero-role">
+        Geospatial Data Scientist<span class="sep">·</span>Climate &amp; Drought Researcher<span class="sep">·</span>AI/ML
+      </div>
+      <p class="hero-desc">
+        I map drought — literally. PhD researcher at the <strong style="color:rgba(255,255,255,.92);font-weight:600">Czech University of Life Sciences, Prague</strong>, quantifying agricultural drought vulnerability across the Danube River Basin with satellite imagery, climate indices, and machine learning.
+      </p>
+      <div class="hero-pills" aria-label="Core tools">
+        <span class="pill">ArcGIS Pro</span>
+        <span class="pill">Python</span>
+        <span class="pill">Remote Sensing</span>
+        <span class="pill">Sentinel-1/2</span>
+        <span class="pill">ERA5</span>
+        <span class="pill">scikit-learn</span>
+        <span class="pill">Google Earth Engine</span>
+        <span class="pill">SPEI · ESI · SWI</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="#research" class="btn btn-primary">View Research
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a href="Tudor_Trifan_CV_2026.pdf" class="btn btn-outline" download>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          Download CV
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-card" aria-label="Profile card">
+      <div class="hero-coords">
+        <span class="pin">◉</span>
+        50.0755° N, 14.4378° E · Prague, Czechia
+      </div>
+      <div class="hero-photo-frame">
+        <img src="photo.jpeg" alt="Tudor Trifan portrait"
+             onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin', '<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;font-family:var(--font-display);font-size:5rem;color:rgba(255,255,255,0.15);font-weight:800;&quot;>TT</div>');">
+        <div class="hero-photo-tag">// tudor.trifan</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="6" data-suffix="+">0</div>
+          <div class="hero-stat-label">Publications</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="8">0</div>
+          <div class="hero-stat-label">Countries</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="22" data-suffix="yr">0</div>
+          <div class="hero-stat-label">Time series</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ ABOUT ════════════════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="eyebrow">About me</div>
+    <h2>Earth observation meets <span class="accent">data intelligence</span></h2>
+
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <p>
+          I am a PhD candidate at the <strong>Czech University of Life Sciences in Prague</strong>, specialising in agricultural drought vulnerability, remote sensing and climate risk modelling across the <em>Danube River Basin</em> — an 8-country transboundary system feeding over 80 million people.
+        </p>
+        <p>
+          My work combines <strong>satellite-derived climate indices</strong> (SPEI-3, ESI, SWI), geospatial analysis and machine learning to build decision-support tools for food and water security. My first-author paper, published in the <em>International Journal of Climatology (Wiley, 2025)</em>, introduces an Integrated Drought Vulnerability Index validated across two decades of data.
+        </p>
+        <p>
+          Beyond academia I hold the <strong>Google AI Professional Certificate</strong> and am completing the <strong>IBM Machine Learning Professional Certificate</strong> — bridging research-grade earth science with industry-ready ML pipelines.
+        </p>
+        <p>
+          Actively seeking roles in EO, climate tech, AgTech and geospatial AI — globally, remote-first, open to relocation for the right team.
+        </p>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-6-8-13a8 8 0 1 1 16 0c0 7-8 13-8 13z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+          <div>
+            <div class="detail-label">Location</div>
+            <div class="detail-value">Prague, Czechia</div>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5a6 3 0 0 0 12 0v-5"/></svg></div>
+          <div>
+            <div class="detail-label">Education</div>
+            <div class="detail-value">PhD @ CZU Prague (2022–Present) · 2× MSc · BSc Geography &amp; Informatics</div>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div>
+          <div>
+            <div class="detail-label">Research area</div>
+            <div class="detail-value">Danube River Basin · 8 countries · 2001–2022</div>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M3 12h18M3 19h18"/><circle cx="6" cy="5" r="1.5" fill="currentColor"/><circle cx="14" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/></svg></div>
+          <div>
+            <div class="detail-label">Languages</div>
+            <div class="detail-value">Romanian (Native) · Russian (C1) · English (B2) · Czech (A2)</div>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
+          <div>
+            <div class="detail-label">Open to</div>
+            <div class="detail-value">EO · Climate tech · AgTech · Remote-first · Relocation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ JOURNEY ════════════════════════════════════════════════════════════ -->
+<section id="journey">
+  <div class="container">
+    <div class="eyebrow">Journey</div>
+    <h2>Education &amp; <span class="accent">experience</span></h2>
+
+    <div class="journey-tabs" role="tablist">
+      <button class="journey-tab is-active" data-tab="edu" role="tab" aria-selected="true">Education</button>
+      <button class="journey-tab" data-tab="exp" role="tab" aria-selected="false">Experience</button>
+    </div>
+
+    <div class="journey-panel is-active" id="panel-edu" role="tabpanel">
+      <div class="timeline fade-in">
+        <div class="tl-item current">
+          <div class="tl-head">
+            <h3 class="tl-title">PhD — Environmental &amp; Geospatial Sciences</h3>
+            <span class="tl-date">Oct 2022 – Present</span>
+          </div>
+          <div class="tl-where">Czech University of Life Sciences (CZU), Prague</div>
+          <div class="tl-body">
+            <ul>
+              <li>Agricultural drought vulnerability · remote sensing indices (SPEI-3, ESI, SWI) · Danube River Basin · 8 countries · 2001–2022</li>
+              <li>First-author publication, <em>International Journal of Climatology</em> (Wiley, 2025) + 5 co-authored papers</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-head">
+            <h3 class="tl-title">MSc — Geomatics</h3>
+            <span class="tl-date">Sep 2020 – Jun 2022</span>
+          </div>
+          <div class="tl-where">Alexandru Ioan Cuza University of Iași, Romania</div>
+          <div class="tl-body">Cartography · geostatistics · remote sensing · risk evaluation and management</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-head">
+            <h3 class="tl-title">MSc — Environmental Geography &amp; Sustainable Development</h3>
+            <span class="tl-date">Sep 2020 – Jul 2022</span>
+          </div>
+          <div class="tl-where">Tiraspol State University, Chișinău, Republic of Moldova</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-head">
+            <h3 class="tl-title">BSc — Geography and Informatics</h3>
+            <span class="tl-date">Aug 2016 – May 2020</span>
+          </div>
+          <div class="tl-where">Tiraspol State University, Chișinău, Republic of Moldova</div>
+          <div class="tl-body">Physical geography · geology · climatology · geomorphology · GIS · computer science</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey-panel" id="panel-exp" role="tabpanel">
+      <div class="timeline fade-in">
+        <div class="tl-item current">
+          <div class="tl-head">
+            <h3 class="tl-title">PhD Researcher</h3>
+            <span class="tl-date">Oct 2022 - Present</span>
+          </div>
+          <div class="tl-where">Czech University of Life Sciences (CZU), Prague</div>
+          <div class="tl-body">
+            <ul>
+              <li>Quantified agricultural drought vulnerability across an 8-country transboundary basin (Danube) using SPEI-3, ESI, SWI, and NDVI on 22 years of satellite data — integrated into a novel IDVI framework published in the <em>International Journal of Climatology</em> (2025).</li>
+              <li>Built a full supervised ML drought classification pipeline (Python · scikit-learn): Gradient Boosting classifier, F1 = 0.887, AUC = 0.960, across 16 meteorological stations and 60 years (11,452 observations); feature engineering included cyclical month encoding, lag variables, rolling precipitation means, and temperature anomalies.</li>
+              <li>Deployed unsupervised climate regime detection (PCA → DBSCAN): recovered north–south aridity gradient and post-2000 warming shift across Moldova without supervised labels; ARI = 0.098 — best of 6 competing models.</li>
+              <li>Developed ERA5 desktop extractor app (Python · customtkinter · Cartopy · netCDF4): handles 60,000+ row datasets with threaded loading, Cartopy contour maps, and CSV export.</li>
+              <li>Co-authored copula modelling study (C-vine copula, 278 districts) linking maize yield losses to multi-scale drought compound events — published in <em>Agricultural Water Management</em> (Elsevier, 2023).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-head">
+            <h3 class="tl-title">Superior Engineer — Geology &amp; Geospatial Mapping</h3>
+            <span class="tl-date">Mar 2018 – Sep 2022</span>
+          </div>
+          <div class="tl-where">Institute of Geology and Seismology, Chișinău, Moldova</div>
+          <div class="tl-body">
+            <ul>
+              <li>Geological profiles and thematic maps using ArcGIS and remote sensing data</li>
+              <li>Field data collection campaigns integrated into GIS workflows</li>
+              <li>Multidisciplinary research collaboration on geomorphological studies</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ RESEARCH ════════════════════════════════════════════════════════════ -->
+<section id="research">
+  <div class="container">
+    <div class="eyebrow">Publications</div>
+    <h2>Peer-reviewed <span class="accent">research</span></h2>
+    <p class="lead">Six publications in international journals and conference proceedings — covering drought vulnerability, compound hazard modelling, and climate hydrology across the Danube River Basin and beyond.</p>
+
+    <!-- Featured paper -->
+    <article class="pub-featured fade-in">
+      <div class="pub-featured-body">
+        <span class="pub-featured-badge">★ Featured · First author</span>
+        <h3 class="pub-featured-title">Assessment of Agricultural Drought Vulnerability in the Transboundary Danube River Basin</h3>
+        <div class="pub-featured-meta">
+          <strong style="color:#fff;font-weight:600">Trifan T. et al.</strong> · International Journal of Climatology · Wiley · 2025<br>
+          Introduces an Integrated Drought Vulnerability Index (IDVI) combining exposure, sensitivity and adaptive capacity — validated across 8 countries and 22 years of remote-sensing data.
+        </div>
+        <div class="pub-featured-chips">
+          <span class="chip">IDVI framework</span>
+          <span class="chip">SPEI-3 · ESI · SWI</span>
+          <span class="chip">8 countries</span>
+          <span class="chip">2001–2022</span>
+          <span class="chip chip-doi">DOI: 10.1002/joc.70090</span>
+        </div>
+        <a href="https://doi.org/10.1002/joc.70090" class="btn btn-primary" target="_blank" rel="noopener">
+          Read paper
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </div>
+      <div class="pub-featured-fig">
+        <!-- Minimal stylised "vulnerability map" figure -->
+        <svg class="pub-figure" viewBox="0 0 320 240" aria-hidden="true">
+          <defs>
+            <linearGradient id="vulnGrad" x1="0" x2="1">
+              <stop offset="0%" stop-color="#2DC4B4"/>
+              <stop offset="50%" stop-color="#E8923A"/>
+              <stop offset="100%" stop-color="#D97676"/>
+            </linearGradient>
+          </defs>
+          <!-- Hex grid representing basin cells -->
+          <g opacity="0.9">
+            <g transform="translate(40,40)">
+              <!-- Row 1 -->
+              <polygon points="0,17 15,8 30,17 30,35 15,44 0,35" fill="#1AA99A" opacity="0.35"/>
+              <polygon points="30,0 45,-9 60,0 60,18 45,27 30,18" fill="#1AA99A" opacity="0.5"/>
+              <polygon points="60,17 75,8 90,17 90,35 75,44 60,35" fill="#E8923A" opacity="0.45"/>
+              <polygon points="90,0 105,-9 120,0 120,18 105,27 90,18" fill="#E8923A" opacity="0.6"/>
+              <polygon points="120,17 135,8 150,17 150,35 135,44 120,35" fill="#D97676" opacity="0.7"/>
+              <polygon points="150,0 165,-9 180,0 180,18 165,27 150,18" fill="#E8923A" opacity="0.5"/>
+              <polygon points="180,17 195,8 210,17 210,35 195,44 180,35" fill="#1AA99A" opacity="0.4"/>
+              <polygon points="210,0 225,-9 240,0 240,18 225,27 210,18" fill="#1AA99A" opacity="0.3"/>
+              <!-- Row 2 -->
+              <polygon points="0,61 15,52 30,61 30,79 15,88 0,79" fill="#1AA99A" opacity="0.45"/>
+              <polygon points="30,44 45,35 60,44 60,62 45,71 30,62" fill="#E8923A" opacity="0.5"/>
+              <polygon points="60,61 75,52 90,61 90,79 75,88 60,79" fill="#D97676" opacity="0.7"/>
+              <polygon points="90,44 105,35 120,44 120,62 105,71 90,62" fill="#D97676" opacity="0.8"/>
+              <polygon points="120,61 135,52 150,61 150,79 135,88 120,79" fill="#E8923A" opacity="0.65"/>
+              <polygon points="150,44 165,35 180,44 180,62 165,71 150,62" fill="#E8923A" opacity="0.55"/>
+              <polygon points="180,61 195,52 210,61 210,79 195,88 180,79" fill="#1AA99A" opacity="0.5"/>
+              <polygon points="210,44 225,35 240,44 240,62 225,71 210,62" fill="#1AA99A" opacity="0.4"/>
+              <!-- Row 3 -->
+              <polygon points="0,105 15,96 30,105 30,123 15,132 0,123" fill="#E8923A" opacity="0.5"/>
+              <polygon points="30,88 45,79 60,88 60,106 45,115 30,106" fill="#D97676" opacity="0.65"/>
+              <polygon points="60,105 75,96 90,105 90,123 75,132 60,123" fill="#E8923A" opacity="0.6"/>
+              <polygon points="90,88 105,79 120,88 120,106 105,115 90,106" fill="#E8923A" opacity="0.5"/>
+              <polygon points="120,105 135,96 150,105 150,123 135,132 120,123" fill="#1AA99A" opacity="0.5"/>
+              <polygon points="150,88 165,79 180,88 180,106 165,115 150,106" fill="#1AA99A" opacity="0.6"/>
+              <polygon points="180,105 195,96 210,105 210,123 195,132 180,123" fill="#1AA99A" opacity="0.35"/>
+            </g>
+          </g>
+          <!-- Legend -->
+          <g transform="translate(40,200)" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(255,255,255,0.55)" letter-spacing="0.08em">
+            <rect x="0" y="0" width="180" height="6" fill="url(#vulnGrad)" rx="2"/>
+            <text x="0" y="20">LOW</text>
+            <text x="155" y="20">HIGH</text>
+            <text x="70" y="20">VULNERABILITY</text>
+          </g>
+        </svg>
+      </div>
+    </article>
+
+    <!-- Other publications -->
+    <div class="pub-list fade-in">
+
+      <div class="pub-card">
+        <div class="pub-year">2026</div>
+        <div>
+          <div class="pub-badge badge-co">Co-author</div>
+          <div class="pub-title">Intensification of Flash and Long-Term Droughts in the Danube River Basin</div>
+          <div class="pub-meta">International Journal of Climatology · Wiley · Potopová V., Trifan T. et al. · ESI · SWI · multi-scale</div>
+        </div>
+        <a class="pub-link" href="https://doi.org/10.1002/joc.70230" target="_blank" rel="noopener">View →</a>
+      </div>
+
+      <div class="pub-card">
+        <div class="pub-year">2023</div>
+        <div>
+          <div class="pub-badge badge-co">Co-author</div>
+          <div class="pub-title">Copulas Modelling of Maize Yield Losses–Drought Compound Events Using Multiple Remote Sensing Indices over the Danube River Basin</div>
+          <div class="pub-meta">Agricultural Water Management · Elsevier · Potopová V., Trifan T. et al. · C-vine copula · 278 districts</div>
+        </div>
+        <a class="pub-link" href="https://doi.org/10.1016/j.agwat.2023.108217" target="_blank" rel="noopener">View →</a>
+      </div>
+
+      <div class="pub-card">
+        <div class="pub-year">2023</div>
+        <div>
+          <div class="pub-badge badge-co">Co-author</div>
+          <div class="pub-title">Water Consumption by Livestock Systems 2002–2020 and Predictions for 2030–2050 under Climate Change in the Czech Republic</div>
+          <div class="pub-meta">Agriculture · MDPI · Potopová V. et al. · climate projections · livestock water use</div>
+        </div>
+        <a class="pub-link" href="https://doi.org/10.3390/agriculture13071291" target="_blank" rel="noopener">View →</a>
+      </div>
+
+      <div class="pub-card">
+        <div class="pub-year">2022</div>
+        <div>
+          <div class="pub-badge badge-co">Co-author</div>
+          <div class="pub-title">Studiu privind factorii care generează alunecările de teren în bazinul hidrografic al râului Bâc</div>
+          <div class="pub-meta">Conferința științifică studențească internațională · Tiraspol State University · T. Trifan, P. Prunici</div>
+        </div>
+        <a class="pub-link" href="https://ibn.idsi.md/sites/default/files/imag_file/24-30_26.pdf" target="_blank" rel="noopener">View →</a>
+      </div>
+
+      <div class="pub-card">
+        <div class="pub-year">2021</div>
+        <div>
+          <div class="pub-badge badge-co">Co-author</div>
+          <div class="pub-title">The Evolution of Climate Runoff at Different Reference Periods (1961–1990 · 1971–2000 · 1981–2010 · 1991–2020)</div>
+          <div class="pub-meta">Conference proceedings · climate hydrology · reference period analysis</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ PROJECTS ════════════════════════════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="eyebrow">Portfolio</div>
+    <h2>Open-source <span class="accent">projects</span></h2>
+    <p class="lead" style="color:rgba(255,255,255,0.6)">
+      Code I've built alongside the IBM Machine Learning Professional Certificate and my own research workflows — desktop tools, supervised &amp; unsupervised ML pipelines, and geospatial utilities.
+    </p>
+
+    <div class="projects-grid fade-in">
+
+      <!-- ERA5 NetCDF Extractor -->
+      <article class="project-card">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <span class="project-status status-live">● Live</span>
+        </div>
+        <h3 class="project-title">ERA5 NetCDF Extractor &amp; Viewer</h3>
+        <p class="project-desc">
+          Desktop tool for loading, filtering, visualising and extracting ERA5 reanalysis climate data from NetCDF files. Threaded loading handles 60,000+ rows without UI freeze.
+        </p>
+        <div class="project-metrics">
+          <span class="metric"><b>60k+</b> rows</span>
+          <span class="metric"><b>K→°C</b> unit conv.</span>
+          <span class="metric"><b>CSV</b> export</span>
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">customtkinter</span>
+          <span class="project-tag">netCDF4</span>
+          <span class="project-tag">Cartopy</span>
+          <span class="project-tag">scipy</span>
+        </div>
+        <a href="https://github.com/Trifan97/era5-extractor" class="project-link" target="_blank" rel="noopener">
+          github.com/Trifan97/era5-extractor
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </article>
+
+      <!-- Drought Classification -->
+      <article class="project-card">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="5" y="12" width="3" height="8"/><rect x="10.5" y="8" width="3" height="12"/><rect x="16" y="4" width="3" height="16"/></svg>
+          </div>
+          <span class="project-status status-soon">▲ May 2026</span>
+        </div>
+        <h3 class="project-title">Drought Classification — Supervised ML</h3>
+        <p class="project-desc">
+          Classifies meteorological drought (Dry / Normal / Wet) across 16 stations and 60 years of data. Feature engineering: cyclical month encoding, lag features, rolling precipitation, temperature anomalies.
+        </p>
+        <div class="project-metrics">
+          <span class="metric">F1 = <b>0.887</b></span>
+          <span class="metric">AUC = <b>0.960</b></span>
+          <span class="metric"><b>11,452</b> obs</span>
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">scikit-learn</span>
+          <span class="project-tag">Gradient Boosting</span>
+          <span class="project-tag">Random Forest</span>
+          <span class="project-tag">SPEI-3</span>
+          <span class="project-tag">pandas</span>
+        </div>
+        <a href="https://github.com/Trifan97" class="project-link" target="_blank" rel="noopener">
+          IBM ML · Course 3 · releasing May 2026
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </article>
+
+      <!-- Climate Regime Detection -->
+      <article class="project-card">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.2"/><circle cx="10" cy="16" r="2.4"/><circle cx="17" cy="17" r="1.7"/></svg>
+          </div>
+          <span class="project-status status-soon">▲ May 2026</span>
+        </div>
+        <h3 class="project-title">Climate Regime Detection — Unsupervised ML</h3>
+        <p class="project-desc">
+          Detected latent climate regimes in 60 years of Moldovan met data with zero label leakage. Recovered a north–south aridity gradient and post-2000 warming shift without supervised labels.
+        </p>
+        <div class="project-metrics">
+          <span class="metric">Silhouette = <b>0.276</b></span>
+          <span class="metric">ARI = <b>0.098</b></span>
+          <span class="metric">PCA <b>90.8%</b> var</span>
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">PCA</span>
+          <span class="project-tag">DBSCAN</span>
+          <span class="project-tag">K-Means</span>
+          <span class="project-tag">Agglomerative</span>
+          <span class="project-tag">scikit-learn</span>
+        </div>
+        <a href="https://github.com/Trifan97" class="project-link" target="_blank" rel="noopener">
+          IBM ML · Course 4 · releasing May 2026
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </article>
+
+      <!-- Coming: Drought Vulnerability Dashboard -->
+      <article class="project-card coming">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <span class="project-status status-soon">▲ Q2 2026</span>
+        </div>
+        <h3 class="project-title">Drought Intelligence Platform</h3>
+        <p class="project-desc">
+          Interactive Streamlit front-end on top of the SPEI3 drought risk — 16-stations from the Republic of Moldova, 1961–2020 time series.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Streamlit</span>
+          <span class="project-tag">GeoPandas</span>
+          <span class="project-tag">Plotly</span>
+          <span class="project-tag">IDVI</span>
+        </div>
+        <span class="project-link">Work in progress · Q2 2026</span>
+      </article>
+
+      <!-- Coming: Sentinel-1 SAR -->
+      <article class="project-card coming">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/><path d="M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+          </div>
+          <span class="project-status status-soon">▲ Q3 2026</span>
+        </div>
+        <h3 class="project-title">Sentinel-1 SAR Soil Moisture Pipeline</h3>
+        <p class="project-desc">
+          Automated SAR processing pipeline for soil-moisture anomaly detection over agricultural areas — ESA SNAP · pyroSAR · Python · ML classification.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Sentinel-1</span>
+          <span class="project-tag">pyroSAR</span>
+          <span class="project-tag">SNAP</span>
+          <span class="project-tag">scikit-learn</span>
+        </div>
+        <span class="project-link">Planned · Q3 2026</span>
+      </article>
+
+      <!-- Coming: GEE time-series -->
+      <article class="project-card coming">
+        <div class="project-head">
+          <div class="project-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5M21 7v5"/></svg>
+          </div>
+          <span class="project-status status-soon">▲ Q4 2026</span>
+        </div>
+        <h3 class="project-title">GEE Crop-Stress Time-Series Analyser</h3>
+        <p class="project-desc">
+          Google Earth Engine app for multi-year NDVI and ESI time-series analysis over Danube Basin agricultural zones — interactive, shareable, URL-driven state.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Google Earth Engine</span>
+          <span class="project-tag">JavaScript</span>
+          <span class="project-tag">NDVI</span>
+          <span class="project-tag">ESI</span>
+        </div>
+        <span class="project-link">Planned · Q4 2026</span>
+      </article>
+
+    </div>
+
+    <p class="projects-note">
+      More on GitHub · <a href="https://github.com/Trifan97" target="_blank" rel="noopener">github.com/Trifan97</a>
+    </p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ CERTIFICATIONS ════════════════════════════════════════════════════════════ -->
+<section id="certifications">
+  <div class="container">
+    <div class="eyebrow">Credentials</div>
+    <h2>Certifications &amp; <span class="accent">training</span></h2>
+    <p class="lead">IBM Machine Learning Professional Certificate and Google AI Professional Certificate completed in 2026</p>
+
+    <div class="certs-grid fade-in">
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">
+            IBM Machine Learning Professional Certificate
+          </div>
+          <div class="cert-issuer">IBM · Coursera · 6 courses </div>
+          <div class="cert-date"> Apr 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo google">G</div>
+        <div>
+          <div class="cert-name">Google AI Professional Certificate</div>
+          <div class="cert-issuer">Google · Coursera · 7 courses · 20+ AI artefacts</div>
+          <div class="cert-date">Feb 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo google">G</div>
+        <div>
+          <div class="cert-name">Google Prompting Essentials Specialization</div>
+          <div class="cert-issuer">Google · Coursera · 4 courses</div>
+          <div class="cert-date">Jan 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo google">G</div>
+        <div>
+          <div class="cert-name">Google AI Essentials Specialization</div>
+          <div class="cert-issuer">Google · Coursera · 5 courses</div>
+          <div class="cert-date">Jan 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Supervised ML: Regression</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Mar 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Exploratory Data Analysis for ML</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Mar 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Supervised ML: Classification</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Mar 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Unsupervised Machine Learning</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Apr 2026</div>
+        </div>
+      </div>
+      
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Deep Learning and Reinforcement Learning</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Apr 2026</div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-logo ibm">IBM</div>
+        <div>
+          <div class="cert-name">Generative AI: Prompt Engineering Basics</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-date">Jan 2026</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ SKILLS ════════════════════════════════════════════════════════════ -->
+<section id="skills">
+  <div class="container">
+    <div class="eyebrow">Expertise</div>
+    <h2>Technical <span class="accent">stack</span></h2>
+
+    <div class="skills-grid fade-in">
+
+      <div>
+        <div class="skill-group-title">GIS &amp; EO Platforms <span class="count">5</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>ArcGIS Pro</span>
+          <span class="skill-chip level-high"><span class="dot"></span>SAGA GIS</span>
+          <span class="skill-chip level-high"><span class="dot"></span>QGIS</span>
+          <span class="skill-chip level-high"><span class="dot"></span>ESA Copernicus</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Sentinel Hub</span>
+          <span class="skill-chip level-mid"><span class="dot"></span>Google Earth Engine</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-title">Satellite Data <span class="count">5</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>Sentinel-2 optical</span>
+          <span class="skill-chip level-mid"><span class="dot"></span>Sentinel-1 SAR</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Landsat 8/9</span>
+          <span class="skill-chip level-high"><span class="dot"></span>ERA5 NetCDF</span>
+          <span class="skill-chip level-mid"><span class="dot"></span>Worldview</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-title">Climate Indices <span class="count">4</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>SPEI-1/3/6/12</span>
+          <span class="skill-chip level-high"><span class="dot"></span>ESI</span>
+          <span class="skill-chip level-high"><span class="dot"></span>SWI</span>
+          <span class="skill-chip level-high"><span class="dot"></span>NDVI / EVI</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Copula modelling</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-title">ML / AI <span class="count">6</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>scikit-learn</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Gradient Boosting</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Random Forest</span>
+          <span class="skill-chip level-high"><span class="dot"></span>PCA</span>
+          <span class="skill-chip level-high"><span class="dot"></span>DBSCAN · K-Means</span>
+          <span class="skill-chip level-learn"><span class="dot"></span>Deep Learning</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-title">Programming <span class="count">3</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>Python (GIS · ML · ETL)</span>
+          <span class="skill-chip level-high"><span class="dot"></span>pandas · NumPy</span>
+          <span class="skill-chip level-mid"><span class="dot"></span>Cartopy · matplotlib</span>
+          <span class="skill-chip level-learn"><span class="dot"></span>JavaScript</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group-title">Productivity <span class="count">4</span></div>
+        <div class="skill-items">
+          <span class="skill-chip level-high"><span class="dot"></span>Adobe Creative Suite</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Microsoft Office</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Google Workspace</span>
+          <span class="skill-chip level-high"><span class="dot"></span>Prompt engineering</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="skill-legend">
+      <span><i style="background:var(--teal-500)"></i>Proficient</span>
+      <span><i style="background:var(--amber-500)"></i>Working knowledge</span>
+      <span><i style="background:var(--ink-300)"></i>Actively learning</span>
+      <span style="margin-left:auto;color:var(--ink-300)">Last updated · Apr 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ CONTACT ════════════════════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="eyebrow">Get in touch</div>
+    <h2>Let's <span class="accent">connect</span></h2>
+
+    <div class="contact-grid fade-in">
+      <div>
+        <p class="contact-intro">
+          I'm actively exploring roles where earth observation, machine learning and climate science meet — from operational drought monitoring to satellite-driven crop risk analytics. Always open to research collaborations and conversations with EO/AI teams.
+        </p>
+        <div class="contact-targets">
+          <span class="contact-target">Earth Observation</span>
+          <span class="contact-target">Climate tech</span>
+          <span class="contact-target">AgTech</span>
+          <span class="contact-target">Geospatial AI</span>
+          <span class="contact-target">Remote-first</span>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:tudor.trifan97@gmail.com" class="contact-link">
+            <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+            <span>tudor.trifan97@gmail.com</span>
+            <span class="arr">→</span>
+          </a>
+          <a href="tel:+420777547649" class="contact-link">
+            <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <span>+420 777 547 649</span>
+            <span class="arr">→</span>
+          </a>
+          <a href="https://www.linkedin.com/in/tudor-trifan" class="contact-link" target="_blank" rel="noopener">
+            <span class="icn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05A3.74 3.74 0 0 1 16.2 8.7c3.6 0 4.26 2.37 4.26 5.45v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM3.56 20.45h3.55V9H3.56v11.45z"/></svg></span>
+            <span>linkedin.com/in/tudor-trifan</span>
+            <span class="arr">→</span>
+          </a>
+          <a href="https://github.com/Trifan97" class="contact-link" target="_blank" rel="noopener">
+            <span class="icn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.27a11 11 0 0 0-3.48 21.46c.55.1.75-.24.75-.53v-1.84c-3.06.67-3.71-1.47-3.71-1.47-.5-1.28-1.22-1.62-1.22-1.62-1-.68.08-.67.08-.67 1.1.08 1.69 1.14 1.69 1.14.98 1.69 2.58 1.2 3.21.92.1-.72.38-1.2.69-1.48-2.45-.28-5.02-1.22-5.02-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.9 0 0 .93-.3 3.05 1.12a10.6 10.6 0 0 1 5.54 0c2.12-1.42 3.04-1.12 3.04-1.12.61 1.5.23 2.62.12 2.9.7.77 1.13 1.75 1.13 2.95 0 4.23-2.58 5.15-5.04 5.43.4.34.74 1 .74 2.02v3c0 .29.2.64.75.53A11 11 0 0 0 12 1.27"/></svg></span>
+            <span>github.com/Trifan97</span>
+            <span class="arr">→</span>
+          </a>
+          <a href="Tudor_Trifan_CV_2026.pdf" class="contact-link" download>
+            <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></span>
+            <span>Download CV (PDF)</span>
+            <span class="arr">↓</span>
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-form" onsubmit="handleSubmit(event)" aria-label="Contact form">
+        <div class="form-group">
+          <label class="form-label" for="cf-name">Name</label>
+          <input id="cf-name" type="text" class="form-input" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cf-email">Email</label>
+          <input id="cf-email" type="email" class="form-input" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cf-msg">Message</label>
+          <textarea id="cf-msg" class="form-textarea" placeholder="Tell me about the opportunity or collaboration…" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start">
+          Send message
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <p id="form-msg" class="form-msg" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ FOOTER ════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-name">Tudor<span>.</span>Trifan</div>
+    <div class="footer-copy">© 2026 · Prague, Czechia · Built from satellites, Python and long nights</div>
+    <div class="footer-links">
+      <a href="#hero">Top</a>
+      <a href="mailto:tudor.trifan97@gmail.com">Email</a>
+      <a href="https://www.linkedin.com/in/tudor-trifan" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/Trifan97" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Fade-in on scroll ───────────────────────────────────────
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+// ── Nav: active link + mobile toggle ───────────────────────
+const sections = [...document.querySelectorAll('section[id]')];
+const navLinks = [...document.querySelectorAll('.nav-links a')];
+const setActive = () => {
+  let current = sections[0]?.id || '';
+  for (const s of sections) {
+    if (window.scrollY + 100 >= s.offsetTop) current = s.id;
+  }
+  navLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + current));
+};
+window.addEventListener('scroll', setActive, { passive: true });
+setActive();
+
+const navToggle = document.getElementById('navToggle');
+const navList = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+  const open = navList.classList.toggle('is-open');
+  navToggle.setAttribute('aria-expanded', String(open));
+});
+navList.addEventListener('click', e => { if (e.target.tagName === 'A') navList.classList.remove('is-open'); });
+
+// ── Journey tabs ───────────────────────────────────────────
+document.querySelectorAll('.journey-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.journey-tab').forEach(t => {
+      const active = t === tab;
+      t.classList.toggle('is-active', active);
+      t.setAttribute('aria-selected', String(active));
+    });
+    document.querySelectorAll('.journey-panel').forEach(p => {
+      p.classList.toggle('is-active', p.id === 'panel-' + target);
+    });
+  });
+});
+
+// ── Animated stat counters ─────────────────────────────────
+const countUp = el => {
+  const target = parseInt(el.dataset.count, 10);
+  const suffix = el.dataset.suffix || '';
+  const dur = 1200;
+  const start = performance.now();
+  const step = (now) => {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+};
+const statIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { countUp(e.target); statIO.unobserve(e.target); }
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll('[data-count]').forEach(el => statIO.observe(el));
+
+// ── Contact form (mailto fallback) ─────────────────────────
+function handleSubmit(e) {
+  e.preventDefault();
+  const name  = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const msg   = document.getElementById('cf-msg').value.trim();
+  const subject = `Portfolio enquiry from ${name}`;
+  const body = `${msg}\n\n— ${name} <${email}>`;
+  window.location.href = `mailto:tudor.trifan97@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('form-msg').textContent = "Thanks — opening your mail client…";
+  e.target.reset();
+}
+</script>
+</body>
+</html>
